@@ -1,0 +1,38 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0b1020;
+  color: #f4f7ff;
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+section {
+  background: #141b33;
+  border: 1px solid #2a3357;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+input, select, button {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #3b4678;
+  background: #1d2650;
+  color: #fff;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul { padding-left: 1.2rem; }

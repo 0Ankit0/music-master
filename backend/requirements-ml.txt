@@ -1,0 +1,3 @@
+# Optional higher-quality source separation stack
+# Install these only if you want `engine=demucs` support.
+demucs==4.0.1
