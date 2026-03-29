@@ -71,7 +71,7 @@ def _separate_demucs(audio_bytes: bytes, target: str) -> tuple[bytes, int]:
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
             raise ValueError(
-                "Demucs separation failed. Install optional dependencies from backend/requirements-ml.txt "
+                "Demucs separation failed. Install optional dependencies with `uv sync --extra ml` in backend/ "
                 f"and ensure ffmpeg is available. stderr: {result.stderr.strip()}"
             )
 

@@ -37,10 +37,10 @@ Music Master is a full-stack learning platform with:
 
 ```bash
 cd backend
-python -m venv .venv
+uv venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uv sync
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 ## Frontend setup
@@ -83,7 +83,7 @@ To enable Demucs-backed separation, install optional dependencies:
 
 ```bash
 cd backend
-pip install -r requirements-ml.txt
+uv sync --extra ml
 ```
 
 Then call `POST /api/songs/separate` with `engine=demucs`.
