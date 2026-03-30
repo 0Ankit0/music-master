@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ChordPracticeSection } from "../components/ChordPracticeSection";
+import { LessonsSection } from "../components/LessonsSection";
+import { SourceSeparationSection } from "../components/SourceSeparationSection";
 import {
   evaluateChord,
   getGuitarLessons,
@@ -9,20 +12,7 @@ import {
   getSupportedChords,
   separateSources,
 } from "../lib/api";
-
-type Lesson = {
-  id: string;
-  title: string;
-  difficulty: "easy" | "medium" | "hard";
-  duration_minutes: number;
-  goals: string[];
-  tips: string[];
-  practice: {
-    drill: string;
-    play_along_bpm: number;
-    repetitions: number;
-  };
-};
+import type { Lesson, SeparationOptions } from "../types/music";
 
 export default function HomePage() {
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -41,7 +31,7 @@ export default function HomePage() {
 
   const [separateTarget, setSeparateTarget] = useState("guitar");
   const [separationEngine, setSeparationEngine] = useState("baseline");
-  const [separationOptions, setSeparationOptions] = useState<{ targets: string[]; engines: string[] }>({
+  const [separationOptions, setSeparationOptions] = useState<SeparationOptions>({
     targets: ["guitar", "vocals", "instrumental", "full_mix"],
     engines: ["baseline", "demucs"],
   });
@@ -67,7 +57,20 @@ export default function HomePage() {
       .catch(() => {
         // keep manual input mode if backend is unavailable
       });
+
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (metronomeUrl) URL.revokeObjectURL(metronomeUrl);
+    };
+  }, [metronomeUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+    };
+  }, [downloadUrl]);
 
   async function handleGenerateMetronome() {
     setMetronomeBusy(true);
@@ -133,141 +136,35 @@ export default function HomePage() {
       <h1>🎸 Music Master</h1>
       <p>Learn guitar step-by-step, validate your played chord, and isolate specific song parts.</p>
 
-      <section>
-        <h2>Structured Guitar Lessons (Easy → Hard)</h2>
-        {loadError ? <p>Could not load lessons: {loadError}</p> : null}
-        {lessons.map((lesson, index) => (
-          <article key={lesson.id}>
-            <h3>
-              Step {index + 1}: {lesson.title} <small>({lesson.difficulty})</small>
-            </h3>
-            <p>
-              Duration: {lesson.duration_minutes} mins | Play Along BPM: {lesson.practice.play_along_bpm}
-            </p>
-            <strong>Goals</strong>
-            <ul>{lesson.goals.map((goal) => <li key={goal}>{goal}</li>)}</ul>
-            <strong>Practice</strong>
-            <p>
-              {lesson.practice.drill} × {lesson.practice.repetitions}
-            </p>
-            <strong>Tips & tricks</strong>
-            <ul>{lesson.tips.map((tip) => <li key={tip}>{tip}</li>)}</ul>
-          </article>
-        ))}
-      </section>
+      <LessonsSection lessons={lessons} loadError={loadError} />
 
-      <section>
-        <h2>Play Along + Chord Accuracy Check</h2>
-        <p>Create a metronome track first, then record your chord in time and upload it.</p>
-        <div>
-          <label>
-            BPM
-            <input
-              type="number"
-              min={40}
-              max={220}
-              value={metronomeBpm}
-              onChange={(e) => setMetronomeBpm(Number(e.target.value))}
-            />
-          </label>
-          <label>
-            Bars
-            <input
-              type="number"
-              min={1}
-              max={64}
-              value={metronomeBars}
-              onChange={(e) => setMetronomeBars(Number(e.target.value))}
-            />
-          </label>
-          <button type="button" onClick={handleGenerateMetronome} disabled={metronomeBusy}>
-            {metronomeBusy ? "Generating..." : "Generate Metronome"}
-          </button>
-        </div>
-        {metronomeError ? <p>Error: {metronomeError}</p> : null}
-        {metronomeUrl ? (
-          <div>
-            <audio controls src={metronomeUrl} />
-            <p>
-              <a href={metronomeUrl} download={`metronome-${metronomeBpm}bpm-${metronomeBars}bars.wav`}>
-                Download metronome WAV
-              </a>
-            </p>
-          </div>
-        ) : null}
+      <ChordPracticeSection
+        metronomeBpm={metronomeBpm}
+        metronomeBars={metronomeBars}
+        metronomeBusy={metronomeBusy}
+        metronomeUrl={metronomeUrl}
+        metronomeError={metronomeError}
+        chord={chord}
+        chordBusy={chordBusy}
+        chordResult={chordResult}
+        supportedChords={supportedChords}
+        onMetronomeBpmChange={setMetronomeBpm}
+        onMetronomeBarsChange={setMetronomeBars}
+        onGenerateMetronome={handleGenerateMetronome}
+        onChordChange={setChord}
+        onChordSubmit={handleChordCheck}
+      />
 
-        <form onSubmit={handleChordCheck}>
-          <label>
-            Expected Chord
-            <input
-              value={chord}
-              onChange={(e) => setChord(e.target.value)}
-              placeholder="Ex: Em, C, F#, Bb"
-              list="supported-chords"
-            />
-            <datalist id="supported-chords">
-              {supportedChords.map((chordOption) => (
-                <option key={chordOption} value={chordOption} />
-              ))}
-            </datalist>
-          </label>
-          <br />
-          <label>
-            Upload your chord recording (WAV/MP3)
-            <input name="chord_audio" type="file" accept="audio/*" />
-          </label>
-          <br />
-          <button type="submit" disabled={chordBusy}>{chordBusy ? "Analyzing..." : "Analyze Chord"}</button>
-        </form>
-        {chordResult && <pre>{chordResult}</pre>}
-      </section>
-
-      <section>
-        <h2>Song Instrument / Vocal Extractor</h2>
-        <form onSubmit={handleSeparation}>
-          <label>
-            Choose output
-            <select value={separateTarget} onChange={(e) => setSeparateTarget(e.target.value)}>
-              {separationOptions.targets.map((target) => (
-                <option key={target} value={target}>
-                  {target === "guitar"
-                    ? "Guitar only"
-                    : target === "vocals"
-                      ? "Vocals only"
-                      : target === "instrumental"
-                        ? "All instruments (no vocals)"
-                        : "Original full mix"}
-                </option>
-              ))}
-            </select>
-          </label>
-          <br />
-          <label>
-            Separation engine
-            <select value={separationEngine} onChange={(e) => setSeparationEngine(e.target.value)}>
-              {separationOptions.engines.map((engine) => (
-                <option key={engine} value={engine}>
-                  {engine === "demucs" ? "Demucs (higher quality)" : "Baseline (fast)"}
-                </option>
-              ))}
-            </select>
-          </label>
-          <br />
-          <label>
-            Upload Song
-            <input name="song_audio" type="file" accept="audio/*" />
-          </label>
-          <br />
-          <button type="submit" disabled={separationBusy}>{separationBusy ? "Extracting..." : "Extract"}</button>
-        </form>
-        {downloadUrl && (
-          <p>
-            <a href={downloadUrl} download={`music-master-${separateTarget}.wav`}>
-              Download extracted audio
-            </a>
-          </p>
-        )}
-      </section>
+      <SourceSeparationSection
+        separateTarget={separateTarget}
+        separationEngine={separationEngine}
+        separationOptions={separationOptions}
+        separationBusy={separationBusy}
+        downloadUrl={downloadUrl}
+        onTargetChange={setSeparateTarget}
+        onEngineChange={setSeparationEngine}
+        onSubmit={handleSeparation}
+      />
     </main>
   );
 }

@@ -1,3 +1,5 @@
+import type { ChordEvaluation, Lesson, SeparationOptions } from "../types/music";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
 
 async function assertOk(res: Response, fallbackMessage: string): Promise<void> {
@@ -15,13 +17,13 @@ async function assertOk(res: Response, fallbackMessage: string): Promise<void> {
   throw new Error(detail || fallbackMessage);
 }
 
-export async function getGuitarLessons() {
+export async function getGuitarLessons(): Promise<{ count: number; lessons: Lesson[] }> {
   const res = await fetch(`${API_BASE}/api/lessons/guitar`, { cache: "no-store" });
   await assertOk(res, "Failed to load lessons");
   return res.json();
 }
 
-export async function evaluateChord(expectedChord: string, audioFile: File) {
+export async function evaluateChord(expectedChord: string, audioFile: File): Promise<ChordEvaluation> {
   const formData = new FormData();
   formData.append("expected_chord", expectedChord);
   formData.append("audio_file", audioFile);
@@ -35,7 +37,7 @@ export async function evaluateChord(expectedChord: string, audioFile: File) {
   return res.json();
 }
 
-export async function separateSources(target: string, audioFile: File, engine: string = "baseline") {
+export async function separateSources(target: string, audioFile: File, engine: string = "baseline"): Promise<Blob> {
   const formData = new FormData();
   formData.append("target", target);
   formData.append("audio_file", audioFile);
@@ -50,23 +52,20 @@ export async function separateSources(target: string, audioFile: File, engine: s
   return res.blob();
 }
 
-
-export async function getMetronome(bpm: number, bars: number) {
+export async function getMetronome(bpm: number, bars: number): Promise<Blob> {
   const params = new URLSearchParams({ bpm: String(bpm), bars: String(bars) });
   const res = await fetch(`${API_BASE}/api/play-along/metronome?${params.toString()}`);
   await assertOk(res, "Metronome generation failed");
   return res.blob();
 }
 
-
-export async function getSeparationOptions() {
+export async function getSeparationOptions(): Promise<SeparationOptions> {
   const res = await fetch(`${API_BASE}/api/songs/separate/options`, { cache: "no-store" });
   await assertOk(res, "Failed to load separation options");
   return res.json();
 }
 
-
-export async function getSupportedChords() {
+export async function getSupportedChords(): Promise<{ supported_chords: string[] }> {
   const res = await fetch(`${API_BASE}/api/chords/supported`, { cache: "no-store" });
   await assertOk(res, "Failed to load supported chords");
   return res.json();
