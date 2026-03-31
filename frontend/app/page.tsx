@@ -2,22 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { ChordPracticeSection } from "../components/ChordPracticeSection";
-import { LessonsSection } from "../components/LessonsSection";
 import { SourceSeparationSection } from "../components/SourceSeparationSection";
+import { ThemeToggle } from "../components/ThemeToggle";
 import {
   evaluateChord,
-  getGuitarLessons,
   getMetronome,
   getSeparationOptions,
   getSupportedChords,
   separateSources,
 } from "../lib/api";
-import type { Lesson, SeparationOptions } from "../types/music";
+import type { SeparationOptions } from "../types/music";
 
 export default function HomePage() {
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [loadError, setLoadError] = useState<string>("");
-
   const [chord, setChord] = useState("Em");
   const [chordResult, setChordResult] = useState<string>("");
   const [chordBusy, setChordBusy] = useState(false);
@@ -39,13 +35,6 @@ export default function HomePage() {
   const [separationBusy, setSeparationBusy] = useState(false);
 
   useEffect(() => {
-    getGuitarLessons()
-      .then((data) => {
-        setLessons(data.lessons);
-        setLoadError("");
-      })
-      .catch((error: Error) => setLoadError(error.message));
-
     getSeparationOptions()
       .then((data) => setSeparationOptions(data))
       .catch(() => {
@@ -57,7 +46,6 @@ export default function HomePage() {
       .catch(() => {
         // keep manual input mode if backend is unavailable
       });
-
   }, []);
 
   useEffect(() => {
@@ -133,10 +121,13 @@ export default function HomePage() {
 
   return (
     <main>
-      <h1>🎸 Music Master</h1>
-      <p>Learn guitar step-by-step, validate your played chord, and isolate specific song parts.</p>
-
-      <LessonsSection lessons={lessons} loadError={loadError} />
+      <header className="page-header">
+        <div>
+          <h1>🎸 Music Master</h1>
+          <p>Sharpen chord accuracy and isolate tracks with a cleaner, studio-friendly workflow.</p>
+        </div>
+        <ThemeToggle />
+      </header>
 
       <ChordPracticeSection
         metronomeBpm={metronomeBpm}
