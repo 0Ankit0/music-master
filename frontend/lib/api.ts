@@ -1,6 +1,6 @@
 import type { ChordEvaluation, Lesson, SeparationOptions } from "../types/music";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000";
 
 async function assertOk(res: Response, fallbackMessage: string): Promise<void> {
   if (res.ok) return;
@@ -20,6 +20,12 @@ async function assertOk(res: Response, fallbackMessage: string): Promise<void> {
 export async function getGuitarLessons(): Promise<{ count: number; lessons: Lesson[] }> {
   const res = await fetch(`${API_BASE}/api/lessons/guitar`, { cache: "no-store" });
   await assertOk(res, "Failed to load lessons");
+  return res.json();
+}
+
+export async function getHealth(): Promise<{ status: string }> {
+  const res = await fetch(`${API_BASE}/api/health`, { cache: "no-store" });
+  await assertOk(res, "Failed to load backend health");
   return res.json();
 }
 

@@ -1,0 +1,457 @@
+:root {
+  color-scheme: dark;
+  --background: #08101f;
+  --background-elevated: rgba(10, 17, 35, 0.82);
+  --foreground: #eef2ff;
+  --card: rgba(16, 23, 46, 0.84);
+  --card-foreground: #eef2ff;
+  --border: rgba(148, 163, 184, 0.2);
+  --muted: #9cabd2;
+  --input: rgba(7, 13, 28, 0.82);
+  --primary: #86efac;
+  --primary-foreground: #07101f;
+  --ring: #7dd3fc;
+  --error: #fda4af;
+  --shadow: 0 28px 60px rgba(2, 6, 23, 0.42);
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: #f5f7ff;
+  --background-elevated: rgba(255, 255, 255, 0.88);
+  --foreground: #091122;
+  --card: rgba(255, 255, 255, 0.9);
+  --card-foreground: #091122;
+  --border: rgba(15, 23, 42, 0.1);
+  --muted: #55617d;
+  --input: #ffffff;
+  --primary: #0f766e;
+  --primary-foreground: #ffffff;
+  --ring: #0284c7;
+  --error: #b91c1c;
+  --shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--foreground);
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.15), transparent 36%),
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 28%),
+    linear-gradient(180deg, #050814 0%, var(--background) 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 85%);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+main.studio-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.studio-header,
+.workflow-grid,
+.section-block {
+  background: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.studio-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: end;
+  padding: 1.6rem;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 760px;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.hero-description {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.hero-actions,
+.hero-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.status-chip {
+  padding: 0.7rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 84%, transparent);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.workflow-grid {
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.studio-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.studio-tab {
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 0.95rem 1rem;
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.studio-tab span {
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.studio-tab small {
+  font-size: 0.8rem;
+}
+
+.studio-tab--active {
+  background: color-mix(in srgb, var(--primary) 18%, var(--card));
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  color: var(--foreground);
+}
+
+.studio-panel {
+  display: none;
+  gap: 1rem;
+}
+
+.studio-panel--active {
+  display: grid;
+}
+
+.section-block {
+  overflow: clip;
+}
+
+.ui-card {
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.25rem;
+}
+
+.ui-card__header {
+  margin-bottom: 1rem;
+}
+
+.ui-card__title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.ui-card__description {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}
+
+.ui-card__content {
+  display: grid;
+  gap: 1rem;
+}
+
+.ui-stack {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ui-stack-sm {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ui-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ui-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ui-row-end {
+  display: flex;
+  align-items: end;
+}
+
+.ui-label {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.ui-input,
+.ui-select,
+.ui-button {
+  width: 100%;
+  min-height: 2.75rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--input);
+  color: var(--foreground);
+  padding: 0.65rem 0.85rem;
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-button:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.ui-button {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.ui-button--default {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: transparent;
+}
+
+.ui-button--secondary {
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+}
+
+.ui-button--outline {
+  background: transparent;
+}
+
+.ui-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.ui-link {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.ui-error {
+  color: var(--error);
+}
+
+.ui-result {
+  margin: 0;
+  white-space: pre-wrap;
+  background: color-mix(in srgb, var(--input) 92%, black);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 0.9rem;
+}
+
+.section-block .ui-card {
+  border-radius: 24px;
+}
+
+.lesson-grid,
+.seed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.lesson-card,
+.seed-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+}
+
+.lesson-card h3,
+.seed-card h3 {
+  margin: 0.6rem 0 0.3rem;
+}
+
+.lesson-card p,
+.seed-card p,
+.check-row p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.lesson-meta,
+.lesson-practice,
+.check-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.lesson-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--muted);
+}
+
+.lesson-list li + li {
+  margin-top: 0.3rem;
+}
+
+.difficulty-badge,
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ui-badge--default {
+  background: color-mix(in srgb, var(--primary) 20%, transparent);
+  color: var(--foreground);
+}
+
+.ui-badge--secondary {
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  color: var(--muted);
+}
+
+.ui-badge--outline {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.seed-layout,
+.checklist {
+  display: grid;
+  gap: 1rem;
+}
+
+.check-row {
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+}
+
+audio {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .studio-header,
+  .workflow-grid,
+  .lesson-grid,
+  .seed-grid,
+  .ui-grid--3,
+  .studio-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-header {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .workflow-grid {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  main.studio-shell {
+    width: min(100% - 1rem, 1180px);
+    padding-top: 1rem;
+  }
+
+  .ui-card,
+  .studio-header,
+  .workflow-grid {
+    border-radius: 18px;
+  }
+
+  .hero-actions,
+  .hero-controls {
+    width: 100%;
+  }
+}

@@ -3,12 +3,12 @@
 Music Master is a full-stack learning platform with:
 
 - **Python FastAPI backend** for lesson APIs, chord analysis, and song source extraction.
-- **Next.js frontend** for interactive lessons, play-along checks, and download of extracted audio.
+- **Vite + React frontend** for interactive lessons, play-along checks, and download of extracted audio.
 
 ## Project structure
 
 - `backend/`: FastAPI application and audio-processing services.
-- `frontend/`: Next.js web application.
+- `frontend/`: Vite + React web application.
 
 ## Features implemented
 
@@ -61,10 +61,6 @@ Short answer: **the backend is still needed** for this project in its current sc
 
 So we should keep backend services for chord analysis and source separation, and optionally move only lesson data/metronome in a future frontend-only pass.
 
-## shadcn/ui + Tailwind note
-
-Using shadcn/ui requires Tailwind and supporting packages in the frontend toolchain. In this execution environment, npm registry access for new packages is blocked (`403 Forbidden`), so those packages cannot be installed here right now. Once package access is available, we can migrate the existing React sections to shadcn/ui components in a follow-up.
-
 ## Backend setup
 
 ```bash
@@ -80,10 +76,10 @@ uv run uvicorn app.main:app --reload --port 8000
 ```bash
 cd frontend
 npm install
-NEXT_PUBLIC_API_BASE=http://localhost:8000 npm run dev
+VITE_API_BASE=http://127.0.0.1:8000 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://127.0.0.1:5173.
 
 ## Testing backend
 
@@ -96,6 +92,10 @@ python -m pytest
 
 The current implementation uses harmonic/percussive decomposition and spectral filtering for a lightweight, dependency-friendly baseline. For production-grade stem quality, you can replace the separation service with Demucs/Spleeter-based inference.
 
+
+## QA guide
+
+Reusable smoke-test steps and seed values live in [frontend/QA.md](frontend/QA.md). The matching frontend seed data is in [frontend/src/data/qaSeed.ts](frontend/src/data/qaSeed.ts).
 
 ## Additional API
 
