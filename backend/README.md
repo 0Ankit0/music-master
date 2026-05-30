@@ -5,7 +5,7 @@ A FastAPI-based backend service for the music application.
 
 ## Prerequisites
 
-- Python 3.13+
+- Python 3.12+
 - uv
 
 ## Installation
